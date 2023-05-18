@@ -116,9 +116,9 @@ def fetch_directions_paths(user_name: str, password: str) -> bool | tuple[bytes,
     - user_name :            login of a given user \n
     - password :             password to that given site/thing that will be stored with it """
 
-    hash_password = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
+    hash_password = hashlib.sha3_512(password.encode('utf-8')).hexdigest()
     hash_user = hashlib.sha1(user_name.encode('utf-8')).hexdigest().upper()
-    binary_key = hash_password[:-8].encode()
+    binary_key = hash_password[20:52].encode()
     file_name = hash_user[:16]
     head, tail = get_user_dir()
 
@@ -147,7 +147,7 @@ def store_direction_paths(user_user: str, key_path: str, login_path: str, site_p
     - site_path :            path where a give account passwords are stored """
 
     hash_user = hashlib.sha1(user_user.encode('utf-8')).hexdigest().upper()
-    binary_key = hash_password[:-8].encode()
+    binary_key = hash_password[20:52].encode()
     file_name = hash_user[:16]
     encrypted_key_path = DirectoryCipher(binary_key).encrypt_directory(key_path.encode(), file_name.encode())
     encrypted_login_path = DirectoryCipher(binary_key).encrypt_directory(login_path.encode(), file_name.encode())

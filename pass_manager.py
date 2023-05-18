@@ -60,7 +60,7 @@ class PasswordManager:
 
         head, tail = get_user_dir()
         user_dict = {user_name: password}
-        hashed = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
+        hashed = hashlib.sha3_512(password.encode('utf-8')).hexdigest()
 
         new_key_path = key_file_path + f'/{prefix_generator(16)}.bin'
         new_user_path = head + tail + f'/{prefix_generator(16)}.bin'

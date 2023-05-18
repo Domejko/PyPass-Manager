@@ -6,3 +6,5 @@ Image/
 .venv/
 include/
 *.json
+.idea/
+__pycache__/
