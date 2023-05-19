@@ -107,18 +107,18 @@ def create_users_list(user_name: str) -> None:
         users.write(hash_user + '\n')
 
 
-def fetch_directions_paths(user_name: str, password: str) -> bool | tuple[bytes, bytes, bytes]:
+def fetch_directions_paths(user_name: str) -> bool | tuple[bytes, bytes]:
     """ Function that first hashes a username with password and then accordingly to a current
     OS go to a fixed directory where file with a directories dictionaries is stored. Compare a
     hashed username with previously stored hashes, as it finds match it decrypt key_path with a key
     from encoded part of hashed password and returns the paths.
 
-    - user_name :            login of a given user \n
+    - user_name :            login of a given user
     - password :             password to that given site/thing that will be stored with it """
 
-    hash_password = hashlib.sha3_512(password.encode('utf-8')).hexdigest()
+    key_hash = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest()
     hash_user = hashlib.sha1(user_name.encode('utf-8')).hexdigest().upper()
-    binary_key = hash_password[20:52].encode()
+    binary_key = key_hash[20:52].encode()
     file_name = hash_user[:16]
     head, tail = get_user_dir()
 
@@ -130,33 +130,29 @@ def fetch_directions_paths(user_name: str, password: str) -> bool | tuple[bytes,
             path = eval(line)
             if path['####1'] == hash_user:
                 key_path = DirectoryCipher(binary_key).decrypt_directory(path['####2'])
-                login_path = DirectoryCipher(binary_key).decrypt_directory(path['####3'])
-                site_path = DirectoryCipher(binary_key).decrypt_directory(path['####4'])
-                return key_path, login_path, site_path
+                site_path = DirectoryCipher(binary_key).decrypt_directory(path['####3'])
+                return key_path, site_path
     return False
 
 
-def store_direction_paths(user_user: str, key_path: str, login_path: str, site_path: str, hash_password: str) -> None:
+def store_direction_paths(user_user: str, key_path: str, site_path: str, key_hash: str) -> None:
     """ Function that takes username with files paths and create a directory (accordingly
     to OS of device) where file paths are encrypted by a 32 byte key and together with hashed
     username are saved to a file in a form of a dictionary.
 
-    - user_name :            login to a new account \n
-    - key_path :             path where user key is stored \n
-    - login_path :           path where user account name with password are stored \n
+    - user_name :            login to a new account
+    - key_path :             path where user key is stored
     - site_path :            path where a give account passwords are stored """
 
     hash_user = hashlib.sha1(user_user.encode('utf-8')).hexdigest().upper()
-    binary_key = hash_password[20:52].encode()
+    binary_key = key_hash[20:52].encode()
     file_name = hash_user[:16]
     encrypted_key_path = DirectoryCipher(binary_key).encrypt_directory(key_path.encode(), file_name.encode())
-    encrypted_login_path = DirectoryCipher(binary_key).encrypt_directory(login_path.encode(), file_name.encode())
     encrypted_site_path = DirectoryCipher(binary_key).encrypt_directory(site_path.encode(), file_name.encode())
 
     direction_dict = {'####1': hash_user,
                       '####2': encrypted_key_path,
-                      '####3': encrypted_login_path,
-                      '####4': encrypted_site_path}
+                      '####3': encrypted_site_path}
 
     head, tail = get_user_dir()
     path = head + tail + f'{file_name}.bin'
@@ -166,10 +162,10 @@ def store_direction_paths(user_user: str, key_path: str, login_path: str, site_p
         data.write(str(direction_dict) + "\n")
 
 
-def delete_files(user_name: str, password: str) -> None:
+def delete_files(user_name: str) -> None:
     """ Deletes all files associated with a given user account.
 
-    - user_name :                 name of a given user account \n
+    - user_name :            name of a given user account
     - password :             password to that account """
 
     hash_user = hashlib.sha1(user_name.encode('utf-8')).hexdigest().upper()
@@ -177,9 +173,8 @@ def delete_files(user_name: str, password: str) -> None:
     head, tail = get_user_dir()
     dir_p = head + tail + f'{file_name}.bin'
 
-    key_p, login_p, site_p = fetch_directions_paths(user_name, password)
+    key_p, site_p = fetch_directions_paths(user_name)
     os.remove(key_p)
-    os.remove(login_p)
     os.remove(site_p)
     os.remove(dir_p)
 
