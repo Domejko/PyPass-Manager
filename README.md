@@ -1,4 +1,4 @@
-# PyPass Manager 1.0
+# PyPass Manager 1.1
 
 **PyPass Manager** is a GUI program that allows every user to store there passwords in one place.
 
@@ -26,10 +26,10 @@ To run raw python code:
 Prebuild installer for each system can be found in .zip file:\
 
 Linux (PPS Linux prebuild .deb) :\
-`PyPass_manager-1.0_all.deb`
+`PyPass_manager-1.1_all.deb`
 
 Windows (PPS Windows prebuild .exe) :\
-`PyPass-Manager-Setup-1.0.exe`
+`PyPass-Manager-Setup-1.1.exe`
 
 # Using PyPass Manager
 
@@ -42,3 +42,24 @@ If you want to contact me you can reach me at sllawny.gry@gmail.com.
 # License
 
 This project uses the following license: MIT License
+
+# Update History
+
+<table>
+<thead>
+	<tr>
+		<th>Version</th>
+		<th>Update Content</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td>2023.05.19 - v1.1</td>
+		<td>Improved security (changed key creation method, increased hash complexity, added sql database, improved login method to mitigate brute force attacks, popup window bug fix)</td>
+	</tr>
+	<tr>
+	    <td>2023.05.16 - v1.0</td>
+	    <td>Initial version</td>
+</tbody>
+</table>
+
