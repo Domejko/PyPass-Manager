@@ -22,11 +22,9 @@ class PopUpWindow:
         self.confirmation_button = None
 
         self._login = None
-        self._password = None
 
     def create_window(self) -> None:
         self.window = ctk.CTkToplevel()
-        self.window.title('Search result')
 
         x, y = display_info()
         window_width = 350
@@ -43,13 +41,15 @@ class PopUpWindow:
 
         self.window.wm_transient(self.frame)
 
-    def info_window(self, message: str) -> None:
+    def info_window(self, message: str, window_title: str) -> None:
         # self.window.grab_set()   # For Windows version this line is on the end of create_window function
+        self.window.title(window_title)
         self.message_label.configure(text=message, font=('Arial', 12, 'bold'))
         self.message_label.place(x=175, y=50, anchor='center')
-        self.window.bind('<Escape>', lambda e: self.close_window(e))
+        self.window.bind('<Escape>', self.close_window)
 
     def delete_user_window(self) -> None:
+        self.window.title('Delete User')
         self.username_entry = ctk.CTkEntry(master=self.window, width=170, height=25, border_width=1, corner_radius=7)
         self.username_entry.place(x=185, y=20, anchor='center')
         self.username_label = ctk.CTkLabel(master=self.window, text='Login:', font=('Arial', 12, 'normal'))
@@ -70,10 +70,14 @@ class PopUpWindow:
 
     def _user_login(self, event: Any = None) -> None:
         self._login = self.username_entry.get()
-        self._password = self.user_password_entry.get()
+        _password = self.user_password_entry.get()
         try:
-            key_p, login_p, _ = fetch_directions_paths(self._login, self._password)
-            if PasswordManager().get_pass(key_p, login_p, self._login) != self._password:
+            key_p, _ = fetch_directions_paths(self._login)
+
+            login, password = PasswordManager().get_encrypted(key_p)
+            typed_login, typed_password = PasswordManager().encrypt_password(key_p, _password, self._login)
+
+            if login == typed_login and password == typed_password:
                 self.user_password_label.configure(text_color='red')
                 self.username_label.configure(text_color='red')
 
@@ -89,9 +93,21 @@ class PopUpWindow:
 
             self.username_entry.delete(0, 'end')
             self.user_password_entry.delete(0, 'end')
+        except ValueError:
+            self.user_password_label.configure(text_color='red')
+            self.username_label.configure(text_color='red')
+
+            self.username_entry.delete(0, 'end')
+            self.user_password_entry.delete(0, 'end')
+        except FileNotFoundError:
+            self.user_password_label.configure(text_color='red')
+            self.username_label.configure(text_color='red')
+
+            self.username_entry.delete(0, 'end')
+            self.user_password_entry.delete(0, 'end')
 
     def delete_user_account(self) -> None:
-        delete_files(self._login, self._password)
+        delete_files(self._login)
         for widget in self.window.winfo_children():
             widget.place_forget()
 
@@ -107,11 +123,12 @@ class PopUpWindow:
 
         self.information_label.place(x=175, y=30, anchor='center')
 
-        self.window.bind('<Escape>', lambda e: self.close_window(e))
+        self.window.bind('<Escape>', self.close_window)
 
     def close_window(self, event: Any = None) -> None:
         # self.window.grab_release()
-        self.window.withdraw()  
+        # self.window.withdraw()
+        self.window.destroy()
 
     def _focus_on(self, event: Any = None):
         self.confirmation_button.configure(fg_color='#14375E')
