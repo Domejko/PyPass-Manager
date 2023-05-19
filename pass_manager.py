@@ -1,7 +1,11 @@
 from typing import Type
 from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import base64
 import os
 import hashlib
+import sqlite3
 
 from tools import users_list, store_direction_paths, prefix_generator, get_user_dir, create_users_list
 
@@ -12,17 +16,41 @@ class PasswordManager:
         self.password_file = None
         self.password_dict = {}
 
-    def create_key(self, key_path: str) -> bool:
-        """ Generate binary key for a given account.
+    def create_key(self, key_path: str, password: str, user_name: str) -> bool:
+        """ Generate binary key for a given account. Create sql database where key, login, password
+        and used salt are stored and returns bool value to provide a feedback th the user.
 
-        - key_path:         directory of where they file will be stored """
+        - key_path :        directory of where they file will be stored
+        - password :        new user password
+        - user_name :       new user login """
 
-        self.key = Fernet.generate_key()
+        salt = Fernet.generate_key()
+        kdf = PBKDF2HMAC(algorithm=hashes.SHA3_512(), length=32, salt=salt, iterations=1480000)
+        self.key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+
+        hashed_pass = hashlib.pbkdf2_hmac(hash_name='sha3-512', password=password.encode(), salt=salt,
+                                          iterations=1500000)
+        hashed_login = hashlib.pbkdf2_hmac(hash_name='sha3-512', password=user_name.encode(), salt=salt,
+                                           iterations=1500000)
 
         try:
-            with open(key_path, 'wb') as key_file:
-                key_file.write(self.key)
-                return True
+            dbase = sqlite3.connect(key_path)
+            curs = dbase.cursor()
+
+            curs.execute("""
+            CREATE TABLE IF NOT EXISTS userdata (
+                data1 VARCHAR(255) NOT NULL,
+                data2 VARCHAR(255) NOT NULL,
+                data3 VARCHAR(255) NOT NULL,
+                data4 VARCHAR(255) NOT NULL)
+                """)
+            curs.execute("INSERT INTO userdata (data1, data2, data3, data4) VALUES (?, ?, ?, ?)",
+                         (self.key, hashed_login, hashed_pass, salt))
+
+            dbase.commit()
+            dbase.close()
+
+            return True
         except PermissionError:
             return False
 
@@ -30,9 +58,9 @@ class PasswordManager:
         """ Create a file where hashed users passwords will be stored passing further information
         that will be hashed and saved in created file.
 
-         - site_path:       directory of where uses password will be stored \n
-         - key_path:        direction of where user key will be stored \n
-         - initial_values:  dictionary containing specific account login and password """
+         - site_path :      directory of where uses password will be stored
+         - key_path :       direction of where user key will be stored
+         - initial_values : dictionary containing specific account login and password """
 
         self.password_file = path
 
@@ -51,33 +79,28 @@ class PasswordManager:
         Prepare given new user information and passing them to another functions/methods for further
         processing.
 
-        - user_name :        login of a give new user \n
-        - password :         password to account of a give new user \n
+        - user_name :        login of a give new user
+        - password :         password to account of a give new user
         - file_path :        directory selected by a user where those files will be created """
 
         if users_list(user_name):
             return False
 
         head, tail = get_user_dir()
-        user_dict = {user_name: password}
-        hashed = hashlib.sha3_512(password.encode('utf-8')).hexdigest()
+        hashed = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest()
 
-        new_key_path = key_file_path + f'/{prefix_generator(16)}.bin'
-        new_user_path = head + tail + f'/{prefix_generator(16)}.bin'
+        new_key_path = key_file_path + f'/{prefix_generator(16)}.db'
         new_sites_path = head + tail + f'/{prefix_generator(16)}.bin'
 
-        if os.path.isfile(new_key_path) or os.path.isfile(new_user_path) or os.path.isfile(new_sites_path):
-            new_key_path = key_file_path + f'/{prefix_generator(24)}.bin'
-            new_user_path = head + tail + f'/{prefix_generator(24)}.bin'
+        if os.path.isfile(new_key_path) or os.path.isfile(new_sites_path):
+            new_key_path = key_file_path + f'/{prefix_generator(24)}.db'
             new_sites_path = head + tail + f'/{prefix_generator(24)}.bin'
 
-        if self.create_key(new_key_path):
-            self.create_password_file(new_user_path, new_key_path, user_dict)
-
+        if self.create_key(new_key_path, password, user_name):
             with open(new_sites_path, 'wb'):
                 pass
 
-            store_direction_paths(user_name, new_key_path, new_user_path, new_sites_path, hashed)
+            store_direction_paths(user_name, new_key_path, new_sites_path, hashed)
             create_users_list(user_name)
             return True
 
@@ -88,7 +111,7 @@ class PasswordManager:
         """ Loads a file from a given path where encrypted passwords are stored and with a give
         key decrypt them and save in a variable.
 
-        - path:             path with a file containing passwords to account or sites """
+        - path :            path with a file containing passwords to account or sites """
 
         self.password_file = path
 
@@ -105,13 +128,19 @@ class PasswordManager:
         """ With a specific key unique to every account this method opens a path where given user
         passwords are stored and with that specific key encrypts passwords and add them to a file.
 
-        - site:             website or name to any given thing to which password will be assigned \n
-        - password:         password to that given site/thing that will be stored with it \n
-        - key_path:         path to where user key file is stored \n
-        - site_path:        path to where users sites passwords file is stored """
+        - site :            website or name to any given thing to which password will be assigned \n
+        - password :        password to that given site/thing that will be stored with it \n
+        - key_path :        path to where user key file is stored \n
+        - site_path :       path to where users sites passwords file is stored """
 
-        with open(key_path, 'rb') as file:
-            self.key = file.readline()
+        dbase = sqlite3.connect(key_path)
+        curs = dbase.cursor()
+
+        curs.execute("SELECT data1 FROM userdata")
+        raw_data = curs.fetchone()
+        self.key = raw_data[0]
+
+        dbase.close()
 
         self.load_password_file(site_path)
         self.password_dict[site] = password
@@ -127,13 +156,62 @@ class PasswordManager:
         for decryption, while that is done it returns a password to a give site specified by
         a user.
 
-        - key_path:         path to where user key file is stored
-        - path:             path to where users passwords file is stored
-        - site:             website or name to any given thing to which password will be give to a user """
+        - key_path :        path to where user key file is stored
+        - path :            path to where users passwords file is stored
+        - site :            website or name to any given thing to which password will be give to a user """
 
-        with open(key_path, 'rb') as file:
-            self.key = file.readline()
+        dbase = sqlite3.connect(key_path)
+        curs = dbase.cursor()
+
+        curs.execute("SELECT data1 FROM userdata")
+        raw_data = curs.fetchone()
+        self.key = raw_data[0]
+
+        dbase.close()
 
         self.load_password_file(path)
 
         return self.password_dict[site]
+
+    @staticmethod
+    def get_encrypted(key_path: str) -> tuple[bytes, bytes]:
+        """ With a given path to sql database it gets user hashed credentials and returns them for
+         login confirmation.
+
+         - key_path :       path to where user key file is stored """
+
+        dbase = sqlite3.connect(key_path)
+        curs = dbase.cursor()
+
+        curs.execute("SELECT * FROM userdata")
+        raw_data = curs.fetchall()
+        login = raw_data[0][1]
+        password = raw_data[0][2]
+
+        dbase.close()
+
+        return login, password
+
+    @staticmethod
+    def encrypt_password(key_path: str, password: str, user_name: str) -> tuple[bytes, bytes]:
+        """ Encrypts login and password input and returns it for login comparison.
+
+        - key_path :        path to where user key file is stored
+        - password :        password taken from login window input
+        - user_name :       user_name taken from login window input """
+
+        dbase = sqlite3.connect(key_path)
+        curs = dbase.cursor()
+
+        curs.execute("SELECT data4 FROM userdata")
+        raw_data = curs.fetchone()
+        salt = raw_data[0]
+
+        dbase.close()
+
+        hashed_pass = hashlib.pbkdf2_hmac(hash_name='sha3-512', password=password.encode(), salt=salt,
+                                          iterations=1500000)
+        hashed_login = hashlib.pbkdf2_hmac(hash_name='sha3-512', password=user_name.encode(), salt=salt,
+                                           iterations=1500000)
+
+        return hashed_login, hashed_pass
