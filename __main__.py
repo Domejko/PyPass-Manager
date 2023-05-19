@@ -1,8 +1,10 @@
+import sqlite3
 from tkinter import filedialog
 from typing import Any
 import customtkinter as ctk
 from PIL import Image
 import re
+import time
 
 # custom files imports
 import pass_checker
@@ -88,6 +90,8 @@ class MainUI(PopUpWindow):
         self.create_user_button = ctk.CTkButton(master=self.frame, text='Create User', command=self.create_user)
 
         self.check_pwned_button = ctk.CTkButton(master=self.frame, text='Check password', command=self.check_password)
+        self.check_pwned_button.bind('<Return>', self.enter_check)
+
         self.save_button = ctk.CTkButton(master=self.frame, text='Save password', command=self.save_password_window)
 
         self.browse_button = ctk.CTkButton(master=self.frame, width=50, text='Browse', command=self.browse_saving_path)
@@ -133,9 +137,13 @@ class MainUI(PopUpWindow):
     def login(self, event: Any = None) -> None:
         self.user_login = self.login_entry.get()
         self.password = self.password_entry.get()
+
         try:
-            key_p, login_p, _ = fetch_directions_paths(self.user_login, self.password)
-            if self.pm.get_pass(key_p, login_p, self.user_login) != self.password:
+            key_p, _ = fetch_directions_paths(self.user_login)
+            login, password = self.pm.get_encrypted(key_p)
+            typed_login, typed_password = self.pm.encrypt_password(key_p, self.password, self.user_login)
+
+            if login != typed_login or password != typed_password:
                 self.error_label.place(x=330, y=200, anchor='center')
                 self.login_entry.delete(0, 'end')
                 self.password_entry.delete(0, 'end')
@@ -145,11 +153,16 @@ class MainUI(PopUpWindow):
             self.error_label.place(x=330, y=200, anchor='center')
             self.login_entry.delete(0, 'end')
             self.password_entry.delete(0, 'end')
+            time.sleep(2)
         except ValueError:
             self.error_label.place(x=330, y=200, anchor='center')
             self.login_entry.delete(0, 'end')
             self.password_entry.delete(0, 'end')
         except FileNotFoundError:
+            self.error_label.place(x=330, y=200, anchor='center')
+            self.login_entry.delete(0, 'end')
+            self.password_entry.delete(0, 'end')
+        except sqlite3.OperationalError:
             self.error_label.place(x=330, y=200, anchor='center')
             self.login_entry.delete(0, 'end')
             self.password_entry.delete(0, 'end')
@@ -230,6 +243,7 @@ class MainUI(PopUpWindow):
 
         self.site_entry.place(x=330, y=270, anchor='center')
         self.site_label.place(x=230, y=270, anchor='e')
+
         self.search_button.place(x=330, y=310, anchor='center')
         self.go_back_button.place(x=15, y=30, anchor='w')
         self.logout_button.place(x=615, y=30, anchor='center')
@@ -241,7 +255,7 @@ class MainUI(PopUpWindow):
 
     def search_password(self) -> None:
         site = self.site_entry.get().lower()
-        key_p, _, site_p = fetch_directions_paths(self.user_login, self.password)
+        key_p, site_p = fetch_directions_paths(self.user_login)
         try:
             password = self.pm.get_pass(key_p, site_p, site)
             message = f'          Site: {site}\nPassword: {password}'
@@ -249,13 +263,15 @@ class MainUI(PopUpWindow):
             self.site_entry.delete(0, 'end')
 
             self.create_window()
-            self.info_window(message)
+            self.info_window(message, 'Search Result')
         except KeyError:
             message = 'Site you entered is incorrect or does not exist.\n ' \
                       'Check your input and try again.'
 
             self.create_window()
-            self.info_window(message)
+            self.info_window(message, 'Search Error')
+
+        self.site_entry.delete(0, 'end')
 
     def check_password_window(self) -> None:
         self.clear_window()
@@ -269,7 +285,6 @@ class MainUI(PopUpWindow):
         self.save_button.bind('<Return>', self.enter_save)
 
         self.password_entry.delete(0, 'end')
-        self.check_pwned_button.bind('<Return>', self.enter_check)
 
         self.password_label.place(x=230, y=270, anchor='e')
         self.password_entry.place(x=330, y=270, anchor='center')
@@ -298,12 +313,12 @@ class MainUI(PopUpWindow):
             message = f'This password was found {count} times...\nYou should use a different password.'
 
             self.create_window()
-            self.info_window(message)
+            self.info_window(message, 'Check Result')
         else:
             message = 'This password was NOT found. Seams secure, carry on.'
 
             self.create_window()
-            self.info_window(message)
+            self.info_window(message, 'Check Result')
 
     def save_password_window(self) -> None:
         self.clear_window()
@@ -329,7 +344,7 @@ class MainUI(PopUpWindow):
         self.go_back_button.place(x=15, y=30, anchor='w')
 
         self.password_entry.bind("<Tab>", self.focus_on_save)
-        self.save_button.bind('<Tab>', self.reset_buttons)
+        self.save_button.bind('<Tab>', self.focus_reset)
         self.save_button.bind('<Return>', self.enter_save_password)
 
         # self.root.bind('<Escape>', self.back_to_menu)
@@ -338,19 +353,19 @@ class MainUI(PopUpWindow):
         password = self.password_entry.get()
         site = self.site_entry.get().lower()
 
-        key_p, _, site_p = fetch_directions_paths(self.user_login, self.password)
+        key_p, site_p = fetch_directions_paths(self.user_login)
 
         if len(password) > 0 and len(site) > 0:
             self.pm.add_password(site, password, key_p, site_p)
             message = 'Your password have been saved successfully.'
 
             self.create_window()
-            self.info_window(message)
+            self.info_window(message, 'Save Result')
         else:
             message = 'Something went wrong. Check entries and try again.'
 
             self.create_window()
-            self.info_window(message)
+            self.info_window(message, 'Save Result')
 
         self.password_entry.delete(0, 'end')
         self.site_entry.delete(0, 'end')
