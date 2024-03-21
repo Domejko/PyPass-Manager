@@ -17,13 +17,9 @@ To install onefile-executable prebuild:
 - Windows 10 or 11
 - Linux (Debian based)
 
-To run raw python code:
-- customtkinter 5.1.2
-- Pillow 9.5.0
-- cryptography 40.0.2
-- requests 2.28.2
-- screeninfo 0.8.1
-- pycryptodome 3.17
+To run raw python code:\
+- `pip install -r requirements.txt`
+
 
 # Installing PyPass Manager
 
@@ -41,45 +37,45 @@ Tkinter is a part of python library but in some environments you may encounter `
 solutions on this error for different environments are as follows:
 
 💡 If you have only one version of Python installed:
-`pip install python3-tkinter`
+- `pip install python3-tkinter`
 
 💡 If you have Python 3 (and, possibly, other versions) installed:
-`pip3 install python3-tkinter`
+- `pip3 install python3-tkinter`
 
 💡 If you don't have PIP or it doesn't work:
-`python -m pip install python3-tkinter`
-`python3 -m pip install python3-tkinter`
+- `python -m pip install python3-tkinter`
+- `python3 -m pip install python3-tkinter`
 
 💡 If you have Linux and you need to fix permissions (any one):
-`sudo pip3 install python3-tkinter`
-`pip3 install python3-tkinter --user`
+- `sudo pip3 install python3-tkinter`
+- `pip3 install python3-tkinter --user`
 
 💡 If you have Linux or Ubuntu with apt:
-`sudo apt-get install python3-tk`
+- `sudo apt-get install python3-tk`
 
 💡 If you're using macOS and you want to install Python 3.9 Tkinter (any):
-`brew install python-tk@3.9`
-`brew install python-tk`
+- `brew install python-tk@3.9`
+- `brew install python-tk`
 
-💡 If you have Fedora
-`sudo dnf install python3-tkinter`
+💡 If you have Fedora:
+- `sudo dnf install python3-tkinter`
 
-💡 If you have Windows and you have set up the py alias
-`py -m pip install python3-tkinter`
+💡 If you have Windows and you have set up the py alias:
+- `py -m pip install python3-tkinter`
 
-💡 If you have Anaconda
-`conda install -c anaconda python3-tkinter`
+💡 If you have Anaconda:
+- `conda install -c anaconda python3-tkinter`
 
-💡 If you have Jupyter Notebook
-`!pip install python3-tkinter`
-`!pip3 install python3-tkinter`
+💡 If you have Jupyter Notebook:
+- `!pip install python3-tkinter`
+- `!pip3 install python3-tkinter`
 
 # Using PyPass Manager
 
 Start the program from an executable shortcut on desktop or from installation directory. First step is to create your 
 account (top left corner) and store your Key on USB drive (you may also store it on your PC/laptop but someone may 
 eventually find it and use it to decode you passwords while USB when not plugged is inaccessible). After that you can 
-login into you account and store your first passwords. Everything inside is described about what function it serves 
+log in into you account and store your first passwords. Everything inside is described about what function it serves 
 and how to use it. You can also always delete an account that you created what is possible form your login window 
 (top right corner).
 
