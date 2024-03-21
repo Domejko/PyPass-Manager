@@ -7,10 +7,10 @@ import re
 import time
 
 # custom files imports
-import pass_checker
-from pass_manager import PasswordManager
-from popup_window import PopUpWindow
-from tools import display_info, fetch_directions_paths
+import src.pass_checker
+from src.pass_manager import PasswordManager
+from src.popup_window import PopUpWindow
+from src.tools import display_info, fetch_directions_paths
 
 
 class MainUI(PopUpWindow):
@@ -36,7 +36,10 @@ class MainUI(PopUpWindow):
         self.frame.pack(pady=20, padx=20, fill='both', expand=True, anchor='center')
 
         # In Windows version image path is only 'logo3.png' because it's kept in the same folder
-        self.my_image = ctk.CTkImage(dark_image=Image.open('/usr/bin/logo3.png'), size=(146, 189))
+        try:
+            self.my_image = ctk.CTkImage(dark_image=Image.open('/usr/bin/logo3.png'), size=(146, 189))
+        except FileNotFoundError:
+            self.my_image = ctk.CTkImage(dark_image=Image.open('logo3.png'), size=(146, 189))
         self.logo_image = ctk.CTkButton(master=self.frame, image=self.my_image, text='', border_width=0,
                                         fg_color='transparent', hover_color='#212121', state='disabled')
         self.logo_image.place(x=325, y=100, anchor='center')
@@ -296,7 +299,7 @@ class MainUI(PopUpWindow):
 
     def check_password(self) -> None:
         password = self.password_entry.get()
-        count = int(pass_checker.run_program(password))
+        count = int(src.pass_checker.run_program(password))
         if count > 0:
             message = f'This password was found {count} times...\nYou should use a different password.'
 
@@ -373,14 +376,14 @@ class MainUI(PopUpWindow):
     def delete_user(self) -> None:
         self.create_window()
         self.delete_user_window()
-        
+
     def show_hide(self) -> None:
         value = self.checkbox.get()
         if value == 1:
             self.password_entry.configure(show='')
         else:
             self.password_entry.configure(show='○')
-    
+
     def clear_window(self) -> None:
         for widget in self.frame.winfo_children():
             if widget is self.logo_image:
@@ -447,7 +450,3 @@ class MainUI(PopUpWindow):
     
     def back_to_menu(self, event: Any) -> None:
         self.menu()
-
-
-if __name__ == '__main__':
-    main = MainUI()

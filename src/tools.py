@@ -5,7 +5,7 @@ import hashlib
 import string
 import random
 
-from dir_cipher import DirectoryCipher
+from src.dir_cipher import DirectoryCipher
 
 
 def prefix_generator(pref_len: int) -> str:
@@ -82,10 +82,7 @@ def users_list(user_name: str) -> bool:
     if os.path.isfile(path):
         with open(path, 'r') as users:
             for line in users:
-                if hash_user not in line:
-                    return False
-                else:
-                    return True
+                return False if hash_user not in line else True
     else:
         return False
 

@@ -7,7 +7,7 @@ import os
 import hashlib
 import sqlite3
 
-from tools import users_list, store_direction_paths, prefix_generator, get_user_dir, create_users_list
+from src.tools import users_list, store_direction_paths, prefix_generator, get_user_dir, create_users_list
 
 
 class PasswordManager:

@@ -1,8 +1,8 @@
 from typing import Any
 import customtkinter as ctk
 
-from tools import fetch_directions_paths, delete_files, display_info
-from pass_manager import PasswordManager
+from src.tools import fetch_directions_paths, delete_files, display_info
+from src.pass_manager import PasswordManager
 
 
 class PopUpWindow:
@@ -87,19 +87,7 @@ class PopUpWindow:
                 self.close_window()
                 self.create_window()
                 self.confirm_deleting()
-        except TypeError:
-            self.user_password_label.configure(text_color='red')
-            self.username_label.configure(text_color='red')
-
-            self.username_entry.delete(0, 'end')
-            self.user_password_entry.delete(0, 'end')
-        except ValueError:
-            self.user_password_label.configure(text_color='red')
-            self.username_label.configure(text_color='red')
-
-            self.username_entry.delete(0, 'end')
-            self.user_password_entry.delete(0, 'end')
-        except FileNotFoundError:
+        except (TypeError, ValueError, FileNotFoundError):
             self.user_password_label.configure(text_color='red')
             self.username_label.configure(text_color='red')
 
