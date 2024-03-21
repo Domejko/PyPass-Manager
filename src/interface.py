@@ -208,8 +208,9 @@ class MainUI(PopUpWindow):
                 self.error_label.place(x=330, y=200, anchor='center')
 
         except FileNotFoundError:
-            self.error_label.configure(text='File path that you given is incorrect. Please pick and existing file path')
+            self.error_label.configure(text='Given path is incorrect. Please pick an existing file path.')
             self.error_label.place(x=330, y=200, anchor='center')
+            self.file_path_entry.delete(0, 'end')
 
     def menu(self) -> None:
         self.clear_window()

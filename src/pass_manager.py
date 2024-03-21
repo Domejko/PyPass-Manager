@@ -97,6 +97,10 @@ class PasswordManager:
             new_sites_path = head + tail + f'/{prefix_generator(24)}.bin'
 
         if self.create_key(new_key_path, password, user_name):
+            if not os.path.exists(head + tail):
+                os.makedirs(head + tail)
+            elif not os.path.exists(key_file_path):
+                os.makedirs(key_file_path)
             with open(new_sites_path, 'wb'):
                 pass
 
