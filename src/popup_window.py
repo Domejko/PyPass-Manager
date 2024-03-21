@@ -77,7 +77,7 @@ class PopUpWindow:
             login, password = PasswordManager().get_encrypted(key_p)
             typed_login, typed_password = PasswordManager().encrypt_password(key_p, _password, self._login)
 
-            if login == typed_login and password == typed_password:
+            if login != typed_login and password != typed_password:
                 self.user_password_label.configure(text_color='red')
                 self.username_label.configure(text_color='red')
 
