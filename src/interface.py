@@ -149,23 +149,11 @@ class MainUI(PopUpWindow):
                 self.password_entry.delete(0, 'end')
             else:
                 self.menu()
-        except TypeError:
+        except (TypeError, ValueError, FileNotFoundError, sqlite3.OperationalError):
             self.error_label.place(x=330, y=200, anchor='center')
             self.login_entry.delete(0, 'end')
             self.password_entry.delete(0, 'end')
             time.sleep(2)
-        except ValueError:
-            self.error_label.place(x=330, y=200, anchor='center')
-            self.login_entry.delete(0, 'end')
-            self.password_entry.delete(0, 'end')
-        except FileNotFoundError:
-            self.error_label.place(x=330, y=200, anchor='center')
-            self.login_entry.delete(0, 'end')
-            self.password_entry.delete(0, 'end')
-        except sqlite3.OperationalError:
-            self.error_label.place(x=330, y=200, anchor='center')
-            self.login_entry.delete(0, 'end')
-            self.password_entry.delete(0, 'end')
 
     def create_user_window(self) -> None:
         self.clear_window()
