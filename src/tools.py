@@ -78,7 +78,7 @@ def users_list(user_name: str) -> bool:
     head, tail = get_user_dir()
     path = head + tail + f'G4OP28duO04S5r96.bin'
 
-    hash_user = hashlib.sha1(user_name.encode('utf-8')).hexdigest().upper()
+    hash_user = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest().upper()
     if os.path.isfile(path):
         with open(path, 'r') as users:
             for line in users:
@@ -96,7 +96,7 @@ def create_users_list(user_name: str) -> None:
     path = head + tail + f'G4OP28duO04S5r96.bin'
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
-    hash_user = hashlib.sha1(user_name.encode('utf-8')).hexdigest().upper()
+    hash_user = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest().upper()
     if not os.path.exists(path):
         with open(path, 'w') as users:
             users.write(hash_user + '\n')
@@ -114,7 +114,7 @@ def fetch_directions_paths(user_name: str) -> bool | tuple[bytes, bytes]:
     - password :             password to that given site/thing that will be stored with it """
 
     key_hash = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest()
-    hash_user = hashlib.sha1(user_name.encode('utf-8')).hexdigest().upper()
+    hash_user = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest().upper()
     binary_key = key_hash[20:52].encode()
     file_name = hash_user[:16]
     head, tail = get_user_dir()
@@ -141,7 +141,7 @@ def store_direction_paths(user_user: str, key_path: str, site_path: str, key_has
     - key_path :             path where user key is stored
     - site_path :            path where a give account passwords are stored """
 
-    hash_user = hashlib.sha1(user_user.encode('utf-8')).hexdigest().upper()
+    hash_user = hashlib.sha3_512(user_user.encode('utf-8')).hexdigest().upper()
     binary_key = key_hash[20:52].encode()
     file_name = hash_user[:16]
     encrypted_key_path = DirectoryCipher(binary_key).encrypt_directory(key_path.encode(), file_name.encode())
@@ -165,7 +165,7 @@ def delete_files(user_name: str) -> None:
     - user_name :            name of a given user account
     - password :             password to that account """
 
-    hash_user = hashlib.sha1(user_name.encode('utf-8')).hexdigest().upper()
+    hash_user = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest().upper()
     file_name = hash_user[:16]
     head, tail = get_user_dir()
     dir_p = head + tail + f'{file_name}.bin'

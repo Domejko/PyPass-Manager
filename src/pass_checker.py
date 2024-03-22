@@ -9,8 +9,9 @@ def request_api_data(query_char: str) -> Response:
 
     - query_char :          hashed front half piece of a password we want to check """
 
+    header = {'Add-Padding': 'true'}
     url = 'https://api.pwnedpasswords.com/range/' + query_char
-    response = requests.get(url)
+    response = requests.get(url, headers=header)
     response.raise_for_status()
     return response
 
@@ -37,6 +38,7 @@ def pwned_api_check(password: str) -> int:
 
      - password :           password which we want to check in a pwnedpasswords database. """
 
+    # API require SHA1 hashing function
     hash_password = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
     password_front, password_tail = hash_password[0:5], hash_password[5:]
     response = request_api_data(password_front)
