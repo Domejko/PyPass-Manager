@@ -39,7 +39,7 @@ class MainUI(PopUpWindow):
         try:
             self.my_image = ctk.CTkImage(dark_image=Image.open('/usr/bin/logo3.png'), size=(146, 189))
         except FileNotFoundError:
-            self.my_image = ctk.CTkImage(dark_image=Image.open('logo3.png'), size=(146, 189))
+            self.my_image = ctk.CTkImage(dark_image=Image.open('src/img/logo3.png'), size=(146, 189))
         self.logo_image = ctk.CTkButton(master=self.frame, image=self.my_image, text='', border_width=0,
                                         fg_color='transparent', hover_color='#212121', state='disabled')
         self.logo_image.place(x=325, y=100, anchor='center')
