@@ -29,7 +29,7 @@ Linux (PPS Linux prebuild .deb) :\
 `PyPass_manager-1.1_all.deb`
 
 Windows (PPS Windows prebuild .exe) :\
-`PyPass-Manager-Setup-1.1.exe`
+`PyPass-Manager-Setup-1.1.1.exe`
 
 # Running code
 
@@ -97,9 +97,16 @@ This project uses the following license: MIT License
 	</tr>
 </thead>
 <tbody>
+    <tr>
+		<td>2024.03.23 - v1.1.1</td>
+		<td>Improved hashing methods to SHA3. Fixed bug where user could not select path for his key. Fixed issue 
+            where user couldn't delete his account. Refactored code and change file structure. Improved startup speed
+            from executable.</td>
+	</tr>
 	<tr>
 		<td>2023.05.19 - v1.1</td>
-		<td>Improved security (changed key creation method, increased hash complexity, added sql database, improved login method to mitigate brute force attacks, popup window bug fix)</td>
+		<td>Improved security (changed key creation method, increased hash complexity, added sql database, improved 
+            login method to mitigate brute force attacks, popup window bug fix)</td>
 	</tr>
 	<tr>
 	    <td>2023.05.16 - v1.0</td>
