@@ -81,7 +81,7 @@ and how to use it. You can also always delete an account that you created what i
 
 # Contact
 
-If you want to contact me you can reach me at sllawny.gry@gmail.com.
+If you want to contact me you can reach me at sllawny@gmail.com.
 
 # License
 
