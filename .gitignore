@@ -8,3 +8,6 @@ include/
 *.json
 .idea/
 __pycache__/
+.spec
+dist/
+build/
