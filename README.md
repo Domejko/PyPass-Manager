@@ -1,4 +1,4 @@
-# PyPass Manager 1.1
+# PyPass Manager 1.1.1
 
 **PyPass Manager** is a GUI program that allows every user to store there passwords in one place.
 
