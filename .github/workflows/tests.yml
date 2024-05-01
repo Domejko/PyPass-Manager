@@ -1,0 +1,35 @@
+name: Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  latest:
+    name: latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.10', '3.11', '3.12']
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4.1.4
+      - name: Setup python
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install apt dependencies (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3-tk
+      - name: Install pip dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: List pip dependencies
+        run: pip list
+      - name: Run tests
+        run: |
+          python3 -m unittest discover tests/
