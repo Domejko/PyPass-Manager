@@ -10,7 +10,7 @@ import time
 import src.pass_checker
 from src.pass_manager import PasswordManager
 from src.popup_window import PopUpWindow
-from src.tools import display_info, fetch_directions_paths
+from src.tools import display_info, fetch_directory_paths
 
 
 class MainUI(PopUpWindow):
@@ -143,7 +143,7 @@ class MainUI(PopUpWindow):
         self.password = self.password_entry.get()
 
         try:
-            key_p, _ = fetch_directions_paths(self.user_login)
+            key_p, _ = fetch_directory_paths(self.user_login)
             login, password = self.pm.get_encrypted(key_p)
             typed_login, typed_password = self.pm.encrypt_password(key_p, self.password, self.user_login)
 
@@ -248,7 +248,7 @@ class MainUI(PopUpWindow):
 
     def search_password(self) -> None:
         site = self.site_entry.get().lower()
-        key_p, site_p = fetch_directions_paths(self.user_login)
+        key_p, site_p = fetch_directory_paths(self.user_login)
         try:
             password = self.pm.get_pass(key_p, site_p, site)
             message = f'          Site: {site}\nPassword: {password}'
@@ -346,7 +346,7 @@ class MainUI(PopUpWindow):
         password = self.password_entry.get()
         site = self.site_entry.get().lower()
 
-        key_p, site_p = fetch_directions_paths(self.user_login)
+        key_p, site_p = fetch_directory_paths(self.user_login)
 
         if len(password) > 0 and len(site) > 0:
             self.pm.add_password(site, password, key_p, site_p)
