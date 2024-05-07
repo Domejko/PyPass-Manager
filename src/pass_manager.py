@@ -7,7 +7,7 @@ import os
 import hashlib
 import sqlite3
 
-from src.tools import users_list, store_direction_paths, prefix_generator, get_user_dir, create_users_list
+from src.tools import users_list, store_directory_paths, prefix_generator, get_user_dir, create_users_list
 
 
 class PasswordManager:
@@ -104,7 +104,7 @@ class PasswordManager:
             with open(new_sites_path, 'wb'):
                 pass
 
-            store_direction_paths(user_name, new_key_path, new_sites_path, hashed)
+            store_directory_paths(user_name, new_key_path, new_sites_path, hashed)
             create_users_list(user_name)
             return True
 

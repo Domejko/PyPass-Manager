@@ -104,7 +104,7 @@ def create_users_list(user_name: str) -> None:
         users.write(hash_user + '\n')
 
 
-def fetch_directions_paths(user_name: str) -> bool | tuple[bytes, bytes]:
+def fetch_directory_paths(user_name: str) -> bool | tuple[bytes, bytes]:
     """ Function that first hashes a username with password and then accordingly to a current
     OS go to a fixed directory where file with a directories dictionaries is stored. Compare a
     hashed username with previously stored hashes, as it finds match it decrypt key_path with a key
@@ -132,7 +132,7 @@ def fetch_directions_paths(user_name: str) -> bool | tuple[bytes, bytes]:
     return False
 
 
-def store_direction_paths(user_user: str, key_path: str, site_path: str, key_hash: str) -> None:
+def store_directory_paths(user_name: str, key_path: str, site_path: str, key_hash: str) -> None:
     """ Function that takes username with files paths and create a directory (accordingly
     to OS of device) where file paths are encrypted by a 32 byte key and together with hashed
     username are saved to a file in a form of a dictionary.
@@ -141,13 +141,13 @@ def store_direction_paths(user_user: str, key_path: str, site_path: str, key_has
     - key_path :             path where user key is stored
     - site_path :            path where a give account passwords are stored """
 
-    hash_user = hashlib.sha3_512(user_user.encode('utf-8')).hexdigest().upper()
+    hash_user = hashlib.sha3_512(user_name.encode('utf-8')).hexdigest().upper()
     binary_key = key_hash[20:52].encode()
     file_name = hash_user[:16]
     encrypted_key_path = DirectoryCipher(binary_key).encrypt_directory(key_path.encode(), file_name.encode())
     encrypted_site_path = DirectoryCipher(binary_key).encrypt_directory(site_path.encode(), file_name.encode())
 
-    direction_dict = {'####1': hash_user,
+    directory_dict = {'####1': hash_user,
                       '####2': encrypted_key_path,
                       '####3': encrypted_site_path}
 
@@ -156,7 +156,7 @@ def store_direction_paths(user_user: str, key_path: str, site_path: str, key_has
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     with open(path, 'a') as data:
-        data.write(str(direction_dict) + "\n")
+        data.write(str(directory_dict) + "\n")
 
 
 def delete_files(user_name: str) -> None:
@@ -170,7 +170,7 @@ def delete_files(user_name: str) -> None:
     head, tail = get_user_dir()
     dir_p = head + tail + f'{file_name}.bin'
 
-    key_p, site_p = fetch_directions_paths(user_name)
+    key_p, site_p = fetch_directory_paths(user_name)
     os.remove(key_p)
     os.remove(site_p)
     os.remove(dir_p)
