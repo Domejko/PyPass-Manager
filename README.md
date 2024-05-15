@@ -74,8 +74,8 @@ solutions on this error for different environments are as follows:
 
 Start the program from an executable shortcut on desktop or from installation directory. First step is to create your 
 account (top left corner) and store your Key on USB drive (you may also store it on your PC/laptop but someone may 
-eventually find it and use it to decode you passwords while USB when not plugged is inaccessible). After that you can 
-log in into you account and store your first passwords. Everything inside is described about what function it serves 
+eventually find it and use it to decode you passwords while USB when not plugged in is inaccessible). After that you can 
+log in into your account and store your first password. Everything inside is described about what function it serves 
 and how to use it. You can also always delete an account that you created what is possible form your login window 
 (top right corner).
 
