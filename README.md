@@ -1,3 +1,7 @@
+<div align="center">
+	<img src="https://github.com/Domejko/PyPass-Manager/assets/119700507/258bb8d7-a68d-4dac-8319-b60129d198be">
+</div>
+
 # PyPass Manager 1.1.1
 
 **PyPass Manager** is a GUI program that allows every user to store there passwords in one place.
