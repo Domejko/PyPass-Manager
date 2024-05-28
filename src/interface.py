@@ -151,13 +151,37 @@ class MainUI(PopUpWindow):
                 self.error_label.place(x=330, y=200, anchor='center')
                 self.login_entry.delete(0, 'end')
                 self.password_entry.delete(0, 'end')
+                time.sleep(2)
             else:
                 self.menu()
+                self.scan_passwords()
+
         except (TypeError, ValueError, FileNotFoundError, sqlite3.OperationalError):
             self.error_label.place(x=330, y=200, anchor='center')
             self.login_entry.delete(0, 'end')
             self.password_entry.delete(0, 'end')
             time.sleep(2)
+
+    def scan_passwords(self):
+        breached_sites = []
+
+        key_p, site_p = fetch_directions_paths(self.user_login)
+        try:
+            login_data = self.pm.get_pass(key_p, site_p)
+
+            for site, password in login_data.items():
+                count = int(src.pass_checker.run_program(password))
+                if count > 0:
+                    breached_sites.append(site)
+
+            message = (f'          This site passwords have been detected in hackers database:\n{breached_sites}\n '
+                       f'Change those passwords to protect your accounts.')
+
+            if len(breached_sites) > 0:
+                self.create_window()
+                self.info_window(message, 'Check Result')
+        except KeyError:
+            pass
 
     def create_user_window(self) -> None:
         self.clear_window()
