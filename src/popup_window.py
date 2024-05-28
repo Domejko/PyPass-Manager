@@ -27,9 +27,10 @@ class PopUpWindow:
         self.window = ctk.CTkToplevel()
 
         x, y = display_info()
-        window_width = 350
+        window_width = 400
         window_height = 100
 
+        self.window.resizable(True, True)
         self.window.geometry('%dx%d+%d+%d' % (window_width, window_height, x*1.25, y*1.4))
 
         self.message_label = ctk.CTkLabel(master=self.window, text='', font=('Arial', 12, 'bold'))
@@ -45,24 +46,24 @@ class PopUpWindow:
         # self.window.grab_set()   # For Windows version this line is on the end of create_window function
         self.window.title(window_title)
         self.message_label.configure(text=message, font=('Arial', 12, 'bold'))
-        self.message_label.place(x=175, y=50, anchor='center')
+        self.message_label.place(x=190, y=50, anchor='center')
         self.window.bind('<Escape>', self.close_window)
 
     def delete_user_window(self) -> None:
         self.window.title('Delete User')
         self.username_entry = ctk.CTkEntry(master=self.window, width=170, height=25, border_width=1, corner_radius=7)
-        self.username_entry.place(x=185, y=20, anchor='center')
+        self.username_entry.place(x=210, y=20, anchor='center')
         self.username_label = ctk.CTkLabel(master=self.window, text='Login:', font=('Arial', 12, 'normal'))
-        self.username_label.place(x=90, y=20, anchor='e')
+        self.username_label.place(x=115, y=20, anchor='e')
 
         self.user_password_entry = ctk.CTkEntry(master=self.window, width=170, height=25, border_width=1,
                                                 corner_radius=7, show='○')
-        self.user_password_entry.place(x=185, y=48, anchor='center')
+        self.user_password_entry.place(x=210, y=48, anchor='center')
         self.user_password_label = ctk.CTkLabel(master=self.window, text='Password:', font=('Arial', 12, 'normal'))
-        self.user_password_label.place(x=90, y=48, anchor='e')
+        self.user_password_label.place(x=115, y=48, anchor='e')
 
         self.confirmation_button = ctk.CTkButton(master=self.window, text='Confirm', command=self._user_login)
-        self.confirmation_button.place(x=185, y=80, anchor='center')
+        self.confirmation_button.place(x=210, y=80, anchor='center')
 
         self.user_password_entry.bind('<Tab>', self._focus_on, add='+')
         self.user_password_entry.bind('<Tab>', self.confirmation_button.bind('<Return>', self._user_login), add='+')
@@ -99,7 +100,7 @@ class PopUpWindow:
         for widget in self.window.winfo_children():
             widget.place_forget()
 
-        self.information_label.place(x=175, y=50, anchor='center')
+        self.information_label.place(x=200, y=50, anchor='center')
         self.information_label.configure(text='Account have been successfully deleted.', text_color='green')
 
     def confirm_deleting(self) -> None:
@@ -109,7 +110,7 @@ class PopUpWindow:
         decline_button = ctk.CTkButton(master=self.window, text='No', command=self.close_window)
         decline_button.place(x=250, y=70, anchor='center')
 
-        self.information_label.place(x=175, y=30, anchor='center')
+        self.information_label.place(x=200, y=30, anchor='center')
 
         self.window.bind('<Escape>', self.close_window)
 
