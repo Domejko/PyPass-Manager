@@ -1,7 +1,7 @@
 from typing import Any
 import customtkinter as ctk
 
-from src.tools import fetch_directions_paths, delete_files, display_info
+from src.tools import fetch_directory_paths, delete_files, display_info
 from src.pass_manager import PasswordManager
 
 
@@ -73,7 +73,7 @@ class PopUpWindow:
         self._login = self.username_entry.get()
         _password = self.user_password_entry.get()
         try:
-            key_p, _ = fetch_directions_paths(self._login)
+            key_p, _ = fetch_directory_paths(self._login)
 
             login, password = PasswordManager().get_encrypted(key_p)
             typed_login, typed_password = PasswordManager().encrypt_password(key_p, _password, self._login)
