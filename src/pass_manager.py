@@ -155,7 +155,7 @@ class PasswordManager:
                 encrypted_password = Fernet(self.key).encrypt(password.encode())
                 file.write(encrypted_login.decode() + ':' + encrypted_password.decode() + '\n')
 
-    def get_pass(self, key_path: str, path: str, site: str) -> str:
+    def get_pass(self, key_path: str, path: str, site: str = None) -> str | dict:
         """ With a give key path it's storing key value to a variable and passing site_path further
         for decryption, while that is done it returns a password to a give site specified by
         a user.
@@ -175,7 +175,10 @@ class PasswordManager:
 
         self.load_password_file(path)
 
-        return self.password_dict[site]
+        if site is None:
+            return self.password_dict
+        else:
+            return self.password_dict[site]
 
     @staticmethod
     def get_encrypted(key_path: str) -> tuple[bytes, bytes]:
