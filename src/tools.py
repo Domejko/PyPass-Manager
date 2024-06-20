@@ -166,7 +166,7 @@ def store_direction_paths(
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     with open(path, "a") as data:
-        data.write(str(direction_dict) + "\n"
+        data.write(str(direction_dict) + "\n")
 
 
 def delete_files(user_name: str) -> None:
