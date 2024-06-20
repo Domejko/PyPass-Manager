@@ -2,5 +2,6 @@ cryptography==42.0.5
 customtkinter==5.2.2
 Pillow==10.3.0
 pycryptodome==3.20.0
-Requests==2.32.0
+Requests==2.31.0
 screeninfo==0.8.1
+black==24.4.2
