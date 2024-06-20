@@ -129,7 +129,7 @@ class PasswordManager:
             with open(new_sites_path, "wb"):
                 pass
 
-            store_direction_paths(user_name, new_key_path, new_sites_path, hashed)
+            store_directory_paths(user_name, new_key_path, new_sites_path, hashed)
             create_users_list(user_name)
             return True
 

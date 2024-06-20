@@ -166,7 +166,7 @@ def store_direction_paths(
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     with open(path, "a") as data:
-        data.write(str(direction_dict) + "\n")
+        data.write(str(direction_dict) + "\n"
 
 
 def delete_files(user_name: str) -> None:
@@ -180,7 +180,7 @@ def delete_files(user_name: str) -> None:
     head, tail = get_user_dir()
     dir_p = head + tail + f"{file_name}.bin"
 
-    key_p, site_p = fetch_directions_paths(user_name)
+    key_p, site_p = fetch_directory_paths(user_name)
     os.remove(key_p)
     os.remove(site_p)
     os.remove(dir_p)
