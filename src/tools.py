@@ -104,7 +104,7 @@ def create_users_list(user_name: str) -> None:
         users.write(hash_user + "\n")
 
 
-def fetch_directions_paths(user_name: str) -> bool | tuple[bytes, bytes]:
+def fetch_directory_paths(user_name: str) -> bool | tuple[bytes, bytes]:
     """Function that first hashes a username with password and then accordingly to a current
     OS go to a fixed directory where file with a directories dictionaries is stored. Compare a
     hashed username with previously stored hashes, as it finds match it decrypt key_path with a key
@@ -132,7 +132,7 @@ def fetch_directions_paths(user_name: str) -> bool | tuple[bytes, bytes]:
     return False
 
 
-def store_direction_paths(
+def store_directory_paths(
     user_name: str, key_path: str, site_path: str, key_hash: str
 ) -> None:
     """Function that takes username with files paths and create a directory (accordingly
