@@ -254,7 +254,7 @@ class MainUI(PopUpWindow):
     def scan_passwords(self):
         breached_sites = []
 
-        key_p, site_p = fetch_directions_paths(self.user_login)
+        key_p, site_p = fetch_directory_paths(self.user_login)
         try:
             login_data = self.pm.get_pass(key_p, site_p)
 

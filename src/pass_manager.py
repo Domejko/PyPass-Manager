@@ -9,7 +9,7 @@ import sqlite3
 
 from src.tools import (
     users_list,
-    store_direction_paths,
+    store_directory_paths,
     prefix_generator,
     get_user_dir,
     create_users_list,
